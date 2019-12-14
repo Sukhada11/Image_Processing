@@ -1,0 +1,58 @@
+======Steps to run Use Case on HIL====================================
+	
+	1. Run following to get started 
+
+	--> cd ~/work/scripts/new_scripts/CGX_Scripts
+	--> ./cgxstartup.sh
+
+	2. Launch sim player (Tab1)
+
+	--> go to sim folder ( /home/administrator/work/sim/DriveConstellation-Rel-0.9RC4)
+	--> export DISPLAY=:0.0
+	-->./nvidia_drivesim --rig=rig-sim-hil.json --non-interactive --wait-for-av
+
+
+	3. Inject scenario (Tab2)
+
+	--> go to scripts  folder ( ~/work/scripts/new_scripts/usage_scripts)
+	-->./run.sh  <scenario path>  <scenario name>  <rig path>
+	Ref :
+	Rig path : ~/work/sim/DriveConstellation-Rel-0.9RC4/rig-sim-hil.json
+	Scenario path : ~/work/database/jenkins/db_scenarios/ 
+	Scenario name : S04B_right_bend_with_ACC_LK.py 
+	
+  4.  lauch RR (Tab3)
+	--> DISPLAY=:0  ./run.sh --autolanechange --car sim-hil --logpath /home/nvidia/Desktop --product sl2
+====================================================================================================================
+====================================To flash new pdk==================================================================
+	1. Cd /home/administrator/work/pdk
+	2. Modify DOCKER_IMAGE_URL with new pdk
+	3. Run ./docker_flash.sh
+	4. Once downloaded 
+	Run /rfs# ./flash.sh -t ES <-- for flashing
+	5. Exit
+    6.Go to sim folder and run this after installing av pack
+        ./static_setup.sh -sm=hil
+===========================================================================================================================
+====================================================Package installation sequence=============================================
+1. Download qa_test_driveav.tar and qa_test_data_sample
+2. Push packages to Tegra
+3. Install av-pacakages on Tegra
+4. Sequence:
+5.  $ sudo dpkg -i driveav_res*.deb
+    $ sudo dpkg -i driveav-*.deb
+    $ sudo dpkg -i driveav_data-*.deb ( we don’t do due to space constraint)
+    $ sudo dpkg -i driveav_samples-*.deb (we don’t do due to space constraint)
+    $ sudo dpkg -i driveav_app-*.deb
+    $ sudo dpkg -i driveav_internal-*.deb
+===============================================================================================================================
+==========================================Mounting===========================================================================
+	1. Download output.tgz and extract
+	2. Copy  artifact-build/test/drive-linux-5.1.6.0/Release to /mnt/data/driveworks
+	3. Ssh to both tegras and create folder /mnt/data/driveworks
+		Sudo mount -t nfs 192.168.0.1:/mnt/data /mnt/data/driveworks
+		Or 
+		Edit /etc/fstab as
+		192.168.0.1:/mnt/data /mnt/data/driveworks nfs user,exec 0 0
+	4. Use this folder to run rr
+===================================================================================================
