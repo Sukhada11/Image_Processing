@@ -4,14 +4,16 @@ import math
 img1 = cv2.imread('j.png')
 img2 = cv2.imread('opening1.png')
 img3 = cv2.imread('closing.png')
-
+img4 = cv2.imread('sudoku.jpg')
 print(img2)
 cv2.imshow('j',img2)
+cv2.imshow('before',img1)
+img4 = cv2.cvtColor(img4,cv2.COLOR_BGR2GRAY)
 img2 = cv2.cvtColor(img2,cv2.COLOR_BGR2GRAY)
 img3 = cv2.cvtColor(img3,cv2.COLOR_BGR2GRAY)
 img1 = cv2.cvtColor(img1,cv2.COLOR_BGR2GRAY)
 img=np.array(([1, 2, 3,4],[4, 3, 2, 1],[1, 2, 3, 4],[1, 4, 3, 2]))
-kernel = np.ones((3,3))
+kernel = np.ones((7,7))
 
 #print(kernel)
 def erode(img,kernel):
@@ -73,13 +75,23 @@ def opening(img,kernel):
     x=erode(img,kernel)   
     y=dilute(x,kernel)
     return y
+
+def grad(img,kernel):
+    x=erode(img,kernel)   
+    y=dilute(img,kernel)
+    z=y-x
+    return z
     
 x=erode(img1,kernel)
 y=dilute(img1,kernel)
+c=grad(img4,kernel)
+
 img1=img1.astype(np.uint8)
 
 a = opening(img2,kernel)
 b = closing(img3,kernel)
+cv2.imshow('gradient',c)
+
 cv2.imshow('before',img1)
 cv2.imshow('erode',x)
 cv2.imshow('dilute',y)
